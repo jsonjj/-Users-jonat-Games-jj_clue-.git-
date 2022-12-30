@@ -11,7 +11,7 @@ var whereInput = document.getElementById("where")
 var turnNum = 1
 var lastTurn = 0
 var order = 1
-var answererInput = document.getElementById("whoAnswered")  
+var answererInput = document.getElementById("whoAnswered");
 if (setupForm) {
     var playerNamesInputs = setupForm.elements["player[]"];
     var board = setupForm.elements["boardCards"]
@@ -19,6 +19,9 @@ if (setupForm) {
 }
 if (turnForm) {
     var answerInput = turnForm.elements["shownCard"]
+}
+if (!gameKey) {
+    var gameKey = urlParams.get('gameKey');
 }
 function insert(tableName, data, callback, badcallback) {
   var xhttp = new XMLHttpRequest();
@@ -119,16 +122,7 @@ function whatIsShown() {
     });
 }
 
-function createGuid() {  
-   function _p8(s) {  
-      var p = (Math.random().toString(16)+"000000000").substr(2,8);  
-      return s ? "-" + p.substr(0,4) + "-" + p.substr(4,4) : p ;  
-   }  
-   return _p8() + _p8(true) + _p8(true) + _p8();  
-}  
-  
-var gameKey = createGuid();  
-
+ 
 function setupInfo() {
     yourName = yourNameInput.value;
     playerNames = Object.values(playerNamesInputs).map((x) => {return x.value})
@@ -186,17 +180,51 @@ function setResults(res) {
 
 function goFromFirstTurnToMoreTurns(res) {
     console.log(`I just got ${res}`)
+    addHiddenFieldToForm(turnForm, "gameKey", gameKey);
+    getDataFromTables()
+    setResults(turnResults())
     //turnForm.submit();
-    setResults(turnInfo())
+
 }
 function gameTurn() {
     insert("turn", turnInfo(), goFromFirstTurnToMoreTurns())
 }
 
+function addHiddenFieldToForm(form, name, value) {
+    var box = document.createElement("input");
+    box.type = "hidden";
+    box.name = name
+    box.value = value
+    form.prepend(box);
+}
+
+
 function goFromSetupToTurnPage(res) {
     console.log(`I just got ${res}`)
+    addHiddenFieldToForm(setupForm, "gameKey", gameKey);
     setupForm.submit();
 }
 function setupGame() {
     insert("gamesetup", setupInfo(), goFromSetupToTurnPage())
 }
+
+function setupResults(res) {
+  return JSON.parse(res)
+}
+
+function turnResults(res) {
+  return JSON.parse(res)
+}
+
+function getDataFromTables() {
+    console.log(`gonnna get ${gameKey} from gamesetup and turn tables`)
+    select("gamesetup", {
+        "gameKey": gameKey
+    }, setupResults);
+
+    select("turn", {
+        "gameKey": gameKey,
+    }, turnResults);
+}
+
+
