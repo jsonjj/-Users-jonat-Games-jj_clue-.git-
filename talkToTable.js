@@ -179,14 +179,15 @@ function turnInfo() {
   };
 }
 
-function setResults(setup, res) {
-    document.getElementById("results").innerHTML = setup
-    console.log(setup)
+function setResults(res) {
+    document.getElementById("results").innerHTML = JSON.stringify(res);
+    document.getElementById("results").style.display = "block";
 }
 
 function goFromFirstTurnToMoreTurns(res) {
     console.log(`I just got ${res}`)
-    turnForm.submit();
+    //turnForm.submit();
+    setResults(turnInfo())
 }
 function gameTurn() {
     insert("turn", turnInfo(), goFromFirstTurnToMoreTurns())
@@ -198,5 +199,4 @@ function goFromSetupToTurnPage(res) {
 }
 function setupGame() {
     insert("gamesetup", setupInfo(), goFromSetupToTurnPage())
-    setResults(turnInfo(), setupInfo())
 }

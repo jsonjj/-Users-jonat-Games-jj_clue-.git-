@@ -8,10 +8,11 @@
     <h2>Clue Solver</h2>
 <p>Player Names:</p>
 <form id="setupForm" action="./turn.html" method="push">
-    <script src="./talkToTable.js"></script>
     <div id = "playerBoxes">
     </div>
     <script>
+    var windowQs = window.location.search;
+var urlParams = new URLSearchParams(windowQs);
         var numOfPlayers = parseInt(urlParams.get('numOfPlayers'));
         function createBox() {
             var box = document.createElement("input");
