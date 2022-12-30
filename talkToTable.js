@@ -4,21 +4,21 @@ var windowQs = window.location.search;
 var urlParams = new URLSearchParams(windowQs);
 var setupForm = document.getElementById("setupForm");
 var yourNameInput = document.getElementById("yourName");
-var turnForm = document.getElementById("turnForm")
-var whoInput = document.getElementById("who")
-var whatInput = document.getElementById("what")
-var whereInput = document.getElementById("where")
-var turnNum = 1
-var lastTurn = 0
-var order = 1
+var turnForm = document.getElementById("turnForm");
+var whoInput = document.getElementById("who");
+var whatInput = document.getElementById("what");
+var whereInput = document.getElementById("where");
+var turnNum = 1;
+var lastTurn = 0;
+var order = 1;
 var answererInput = document.getElementById("whoAnswered");
 if (setupForm) {
     var playerNamesInputs = setupForm.elements["player[]"];
-    var board = setupForm.elements["boardCards"]
-    var mineCards = setupForm.elements["yourCards"]
+    var board = setupForm.elements.boardCards;
+    var mineCards = setupForm.elements.yourCards;
 }
 if (turnForm) {
-    var answerInput = turnForm.elements["shownCard"]
+    var answerInput = turnForm.elements.shownCard;
 }
 if (!gameKey) {
     var gameKey = urlParams.get('gameKey');
@@ -50,7 +50,9 @@ function insert(tableName, data, callback, badcallback) {
 function select(tableName, filter, callback, badcallback) {
   var xhttp = new XMLHttpRequest();
   xhttp.onreadystatechange = function () {
+              console.log(`Selecting data w/ ready State: ${this.readyState}`);
     if (this.readyState == 4) {
+        console.log(`Selecting data and ready w/ status: ${this.status}`);
       if (this.status >= 200 && this.status < 300) {
         if (callback) {
           callback(this.responseText);
@@ -62,6 +64,17 @@ function select(tableName, filter, callback, badcallback) {
       }
     }
   };
+
+  var stringifiedFilter = JSON.stringify(filter);
+  var encoded = encodeURI(stringifiedFilter);
+//  xhttp.open("GET", `${baseTableUrl}/${tableName}?q=${stringifiedFilter}`, true);
+
+  xhttp.open("GET", `${baseTableUrl}/${tableName}?q=${encoded}`, true);
+    // xhttp.setRequestHeader("Accept", "application/json");
+  xhttp.setRequestHeader("Content-Type", "application/json");
+  xhttp.setRequestHeader("x-apikey", dbApiCorsKey);
+  console.log(`Looking '${tableName}' Record where: ${stringifiedFilter}...`);
+  xhttp.send();
 }
 
 function getURLParam(key,target){
@@ -90,9 +103,9 @@ function getURLParam(key,target){
 function boardCards() {
     return Object.values(board).map(function(x) {
         if (x.checked !== true) {
-            return null
+            return null;
         } else {
-            return x.id
+            return x.id;
         }
     }).filter(elements => {
     return elements !== null;
@@ -101,9 +114,9 @@ function boardCards() {
 function myCards() {
     return Object.values(mineCards).map(function(x) {
         if (x.checked !== true) {
-            return null
+            return null;
         } else {
-            return x.id
+            return x.id;
         }
     }).filter(elements => {
     return elements !== null;
@@ -113,9 +126,9 @@ function myCards() {
 function whatIsShown() {
     return Object.values(answerInput).map(function(x) {
         if (x.checked !== true) {
-            return null
+            return null;
         } else {
-            return x.id
+            return x.id;
         }
     }).filter(elements => {
     return elements !== null;
@@ -139,19 +152,19 @@ function setupInfo() {
 
 function turnNum(turnNum, order) {
     if (lastTurn > 0) {     
-        turnNum = turnNum + 1
-        lastTurn = 0
+        turnNum = turnNum + 1;
+        lastTurn = 0;
     }
-    if (order = parseInt(urlParams.get('numOfPlayers'))) {
-        lastTurn = 1
+    if (order == parseInt(urlParams.get('numOfPlayers'))) {
+        lastTurn = 1;
     }
 }
 
 function order(order) {
     if (order > parseInt(urlParams.get('numOfPlayers'))) {
-        order = 1
+        order = 1;
     } else {
-        order = order + 1
+        order = order + 1;
     }
 }
 
@@ -160,7 +173,7 @@ function turnInfo() {
     var what = whatInput.value;
     var where = whereInput.value;
     var whoAnswered = answererInput.value;
-;
+
   return {
       "whoInQuestion": who,
       "whatInQuestion": what,
@@ -179,52 +192,61 @@ function setResults(res) {
 }
 
 function goFromFirstTurnToMoreTurns(res) {
-    console.log(`I just got ${res}`)
+    console.log(`I just gained ${res}`);
     addHiddenFieldToForm(turnForm, "gameKey", gameKey);
-    getDataFromTables()
-    setResults(turnResults())
-    //turnForm.submit();
+    getDataFromTables();
+    turnForm.submit();
 
 }
 function gameTurn() {
-    insert("turn", turnInfo(), goFromFirstTurnToMoreTurns())
+    insert("turn", turnInfo(), goFromFirstTurnToMoreTurns);
 }
 
 function addHiddenFieldToForm(form, name, value) {
     var box = document.createElement("input");
     box.type = "hidden";
-    box.name = name
-    box.value = value
+    box.name = name;
+    box.value = value;
     form.prepend(box);
 }
 
 
 function goFromSetupToTurnPage(res) {
-    console.log(`I just got ${res}`)
+    console.log(`I recieved got ${res}`);
     addHiddenFieldToForm(setupForm, "gameKey", gameKey);
     setupForm.submit();
 }
 function setupGame() {
-    insert("gamesetup", setupInfo(), goFromSetupToTurnPage())
+    insert("gamesetup", setupInfo(), goFromSetupToTurnPage);
 }
 
 function setupResults(res) {
-  return JSON.parse(res)
+    console.log(`i got ${res} from gamesetup table`);
+    getDataFromGameTurnTable(res);
 }
 
-function turnResults(res) {
-  return JSON.parse(res)
+function turnResults(res1, res2) {
+   var obj1 = JSON.parse(res1);
+   var obj2 = JSON.parse(res2);
+   var mergedObj = { ...obj1,  ...obj2 };
+   
+   setResults(mergedObj);
+}
+
+function handleError(res) {
+    console.log(`got an error: ${JSON.stringify(res)}`);
 }
 
 function getDataFromTables() {
-    console.log(`gonnna get ${gameKey} from gamesetup and turn tables`)
-    select("gamesetup", {
-        "gameKey": gameKey
-    }, setupResults);
-
-    select("turn", {
-        "gameKey": gameKey,
-    }, turnResults);
+    getDataFromGameSetupTable();
 }
 
+function getDataFromGameSetupTable() {
+    console.log(`gonnna get ${gameKey} from gamesetup table`)
+    select("gamesetup", {"gameKey": gameKey}, setupResults, handleError);
+}
 
+function getDataFromGameTurnTable(res1) {
+    console.log(`gonnna get ${gameKey} from turn table`)
+    select("turn", {"gameKey": gameKey}, function(res2) { turnResults(res1, res2) }, handleError);
+}
