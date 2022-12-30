@@ -4,12 +4,22 @@ var windowQs = window.location.search;
 var urlParams = new URLSearchParams(windowQs);
 var setupForm = document.getElementById("setupForm");
 var yourNameInput = document.getElementById("yourName");
+var turnForm = document.getElementById("turnForm")
+var whoInput = document.getElementById("who")
+var whatInput = document.getElementById("what")
+var whereInput = document.getElementById("where")
+var turnNum = 1
+var lastTurn = 0
+var order = 1
+var answererInput = document.getElementById("whoAnswered")  
 if (setupForm) {
     var playerNamesInputs = setupForm.elements["player[]"];
     var board = setupForm.elements["boardCards"]
     var mineCards = setupForm.elements["yourCards"]
 }
-
+if (turnForm) {
+    var answerInput = turnForm.elements["shownCard"]
+}
 function insert(tableName, data, callback, badcallback) {
   var xhttp = new XMLHttpRequest();
   xhttp.onreadystatechange = function () {
@@ -97,6 +107,18 @@ function myCards() {
     });
 }
 
+function whatIsShown() {
+    return Object.values(answerInput).map(function(x) {
+        if (x.checked !== true) {
+            return null
+        } else {
+            return x.id
+        }
+    }).filter(elements => {
+    return elements !== null;
+    });
+}
+
 function createGuid() {  
    function _p8(s) {  
       var p = (Math.random().toString(16)+"000000000").substr(2,8);  
@@ -121,7 +143,54 @@ function setupInfo() {
   };
 }
 
+function turnNum(turnNum, order) {
+    if (lastTurn > 0) {     
+        turnNum = turnNum + 1
+        lastTurn = 0
+    }
+    if (order = parseInt(urlParams.get('numOfPlayers'))) {
+        lastTurn = 1
+    }
+}
 
+function order(order) {
+    if (order > parseInt(urlParams.get('numOfPlayers'))) {
+        order = 1
+    } else {
+        order = order + 1
+    }
+}
+
+function turnInfo() {
+    var who = whoInput.value;
+    var what = whatInput.value;
+    var where = whereInput.value;
+    var whoAnswered = answererInput.value;
+;
+  return {
+      "whoInQuestion": who,
+      "whatInQuestion": what,
+      "whereInQuestion": where,
+      "turnNum": turnNum,
+      "gameKey": gameKey,
+      "order": order,
+      "whoAnswered": whoAnswered,
+      "whatWasShown": whatIsShown(),
+  };
+}
+
+function setResults(setup, res) {
+    document.getElementById("results").innerHTML = setup
+    console.log(setup)
+}
+
+function goFromFirstTurnToMoreTurns(res) {
+    console.log(`I just got ${res}`)
+    turnForm.submit();
+}
+function gameTurn() {
+    insert("turn", turnInfo(), goFromFirstTurnToMoreTurns())
+}
 
 function goFromSetupToTurnPage(res) {
     console.log(`I just got ${res}`)
@@ -129,4 +198,5 @@ function goFromSetupToTurnPage(res) {
 }
 function setupGame() {
     insert("gamesetup", setupInfo(), goFromSetupToTurnPage())
+    setResults(turnInfo(), setupInfo())
 }

@@ -6,9 +6,13 @@
 </head>
 <body>
     <h2>Clue Solver</h2>
-        <script src="./talkToTable.js"></script>
 <p>What Question did Player Ask:</p>
-<form action="./turns.html" method="post">
+<form id="turnForm" method="post">
+    <script src="./talkToTable.js">
+        if (turnNum > 1) {
+            document.getElementById("results").style.display = "block"
+        }
+    </script>
     <select id="who" name="who">
         <option value="green">Green</option>
         <option value="mustard">Mustard</option>
@@ -37,7 +41,7 @@
         <option value="office">Office</option>
     </select><br>
     <p>Who Answered:</p>
-    <select id="whoAnwered" name="whoAnswered">
+    <select id="whoAnswered" name="whoAnswered">
         <option value="player1">P1</option>
         <option value="player2">P2</option>
         <option value="player3">P3</option>
@@ -46,51 +50,54 @@
         <option value="player6">P6</option>
     </select><br>
     <p>What did they show(if you know):</p>
-    <input type="radio" id="green" name=boardCards>
+    <input type="radio" id="green" name=shownCard>
     <label for="green"> Green</label> &nbsp;&nbsp;&nbsp; 
-    <input type="radio" id="mustard" name=boardCards>
+    <input type="radio" id="mustard" name=shownCard>
     <label for="mustard"> Mustard</label> &nbsp;&nbsp;&nbsp; 
-    <input type="radio" id="peacock" name=boardCards>
+    <input type="radio" id="peacock" name=shownCard>
     <label for="peacock"> Peacock</label> &nbsp;&nbsp;&nbsp; 
-    <input type="radio" id="mustard" name=boardCards>
+    <input type="radio" id="mustard" name=shownCard>
     <label for="mustard"> Plum</label> &nbsp;&nbsp;&nbsp; 
-    <input type="radio" id="peacock" name=boardCards>
+    <input type="radio" id="peacock" name=shownCard>
     <label for="peacock"> Scarlet</label> &nbsp;&nbsp;&nbsp; 
-    <input type="radio" id="white" name=boardCards>
+    <input type="radio" id="white" name=shownCard>
     <label for="white"> White</label> &nbsp;&nbsp;&nbsp; 
-    <input type="radio" id="candlestick" name=boardCards>
+    <input type="radio" id="candlestick" name=shownCard>
     <label for="candlestick"> Candlestick</label><br>
-    <input type="radio" id="dagger" name=boardCards>
+    <input type="radio" id="dagger" name=shownCard>
     <label for="dagger"> Dagger</label> &nbsp;&nbsp;&nbsp; 
-    <input type="radio" id="pistol" name=boardCards>
+    <input type="radio" id="pistol" name=shownCard>
     <label for="pistol"> Pistol</label> &nbsp;&nbsp;&nbsp; 
-    <input type="radio" id="lead_pipe" name=boardCards>
+    <input type="radio" id="lead_pipe" name=shownCard>
     <label for="lead_pipe"> Lead Pipe</label> &nbsp;&nbsp;&nbsp; 
-    <input type="radio" id="rope" name=boardCards>
+    <input type="radio" id="rope" name=shownCard>
     <label for="rope"> Rope</label> &nbsp;&nbsp;&nbsp; 
-    <input type="radio" id="wrench" name=boardCards>
+    <input type="radio" id="wrench" name=shownCard>
     <label for="wrench"> Wrench</label> &nbsp;&nbsp;&nbsp; 
-    <input type="radio" id="bathroom" name=boardCards>
+    <input type="radio" id="bathroom" name=shownCard>
     <label for="bathroom"> Bathroom</label> &nbsp;&nbsp;&nbsp; 
-    <input type="radio" id="bedroom" name=boardCards>
+    <input type="radio" id="bedroom" name=shownCard>
     <label for="bedroom"> Bedroom</label><br>
-    <input type="radio" id="courtyard" name=boardCards>
+    <input type="radio" id="courtyard" name=shownCard>
     <label for="courtyard"> Courtyard</label> &nbsp;&nbsp;&nbsp; 
-    <input type="radio" id="dining_room" name=boardCards>
+    <input type="radio" id="dining_room" name=shownCard>
     <label for="dining_room"> Dining Room</label> &nbsp;&nbsp;&nbsp; 
-    <input type="radio" id="game_room" name=boardCards>
+    <input type="radio" id="game_room" name=shownCard>
     <label for="game_room"> Game Room</label> &nbsp;&nbsp;&nbsp; 
-    <input type="radio" id="garage" name=boardCards>
+    <input type="radio" id="garage" name=shownCard>
     <label for="garage"> Garage</label> &nbsp;&nbsp;&nbsp; 
-    <input type="radio" id="kitchen" name=boardCards>
+    <input type="radio" id="kitchen" name=shownCard>
     <label for="kitchen"> Kitchen</label> &nbsp;&nbsp;&nbsp; 
-    <input type="radio" id="living_room" name=boardCards>
+    <input type="radio" id="living_room" name=shownCard>
     <label for="living_room"> Living Room</label> &nbsp;&nbsp;&nbsp; 
-    <input type="radio" id="office" name=boardCards>
+    <input type="radio" id="office" name=shownCard>
     <label for="office"> Office</label><br>
-    <input type="radio" id="nothing" name=boardCards>
+    <input type="radio" id="nothing" name=shownCard>
     <label for="nothing"> Nothing</label><br>
-    <input type="submit" value="Submit" name=>
+    <script src="./talkToTable.js"></script>
+    <button type="button" onclick="(function(){ gameTurn(); })();">Submit</button>
 </form> 
+    <div id="results" style="display:none"></div>
+    <script src="./talkToTable.js"></script>
 </body>
 </html>
