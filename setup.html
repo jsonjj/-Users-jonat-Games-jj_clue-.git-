@@ -1,0 +1,118 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <title>Clue Solver</title>
+    
+</head>
+<body>
+    <h2>Clue Solver</h2>
+<p>Player Names:</p>
+<form id="setupForm" action="./turn.html" method="push">
+    <script src="./talkToTable.js"></script>
+    <div id = "playerBoxes">
+    </div>
+    <script>
+        var numOfPlayers = parseInt(urlParams.get('numOfPlayers'));
+        function createBox() {
+            var box = document.createElement("input");
+            box.type = "text";
+            box.name = `player[]`
+            setupForm.prepend(box);
+        }
+        for (let i = 0; i < numOfPlayers; i++) {
+            createBox();
+        }
+    </script>
+    <p>Your Name:</p>
+    <input type="text" id="yourName" name="yourName"><br>
+    <p>Board Cards:</p>
+    <input type="checkbox" id="green" name=boardCards>
+    <label for="green"> Green</label> &nbsp;&nbsp;&nbsp; 
+    <input type="checkbox" id="mustard" name=boardCards>
+    <label for="mustard"> Mustard</label> &nbsp;&nbsp;&nbsp; 
+    <input type="checkbox" id="peacock" name=boardCards>
+    <label for="peacock"> Peacock</label> &nbsp;&nbsp;&nbsp; 
+    <input type="checkbox" id="mustard" name=boardCards>
+    <label for="mustard"> Plum</label> &nbsp;&nbsp;&nbsp; 
+    <input type="checkbox" id="peacock" name=boardCards>
+    <label for="peacock"> Scarlet</label> &nbsp;&nbsp;&nbsp; 
+    <input type="checkbox" id="white" name=boardCards>
+    <label for="white"> White</label> &nbsp;&nbsp;&nbsp; 
+    <input type="checkbox" id="candlestick" name=boardCards>
+    <label for="candlestick"> Candlestick</label><br>
+    <input type="checkbox" id="dagger" name=boardCards>
+    <label for="dagger"> Dagger</label> &nbsp;&nbsp;&nbsp; 
+    <input type="checkbox" id="pistol" name=boardCards>
+    <label for="pistol"> Pistol</label> &nbsp;&nbsp;&nbsp; 
+    <input type="checkbox" id="lead_pipe" name=boardCards>
+    <label for="lead_pipe"> Lead Pipe</label> &nbsp;&nbsp;&nbsp; 
+    <input type="checkbox" id="rope" name=boardCards>
+    <label for="rope"> Rope</label> &nbsp;&nbsp;&nbsp; 
+    <input type="checkbox" id="wrench" name=boardCards>
+    <label for="wrench"> Wrench</label> &nbsp;&nbsp;&nbsp; 
+    <input type="checkbox" id="bathroom" name=boardCards>
+    <label for="bathroom"> Bathroom</label> &nbsp;&nbsp;&nbsp; 
+    <input type="checkbox" id="bedroom" name=boardCards>
+    <label for="bedroom"> Bedroom</label><br>
+    <input type="checkbox" id="courtyard" name=boardCards>
+    <label for="courtyard"> Courtyard</label> &nbsp;&nbsp;&nbsp; 
+    <input type="checkbox" id="dining_room" name=boardCards>
+    <label for="dining_room"> Dining Room</label> &nbsp;&nbsp;&nbsp; 
+    <input type="checkbox" id="game_room" name=boardCards>
+    <label for="game_room"> Game Room</label> &nbsp;&nbsp;&nbsp; 
+    <input type="checkbox" id="garage" name=boardCards>
+    <label for="garage"> Garage</label> &nbsp;&nbsp;&nbsp; 
+    <input type="checkbox" id="kitchen" name=boardCards>
+    <label for="kitchen"> Kitchen</label> &nbsp;&nbsp;&nbsp; 
+    <input type="checkbox" id="living_room" name=boardCards>
+    <label for="living_room"> Living Room</label> &nbsp;&nbsp;&nbsp; 
+    <input type="checkbox" id="office" name=boardCards>
+    <label for="office"> Office</label><br>
+    <p>Your Cards:</p>
+    <input type="checkbox" id="green" name=yourCards>
+    <label for="green"> Green</label> &nbsp;&nbsp;&nbsp; 
+    <input type="checkbox" id="mustard" name=yourCards>
+    <label for="mustard"> Mustard</label> &nbsp;&nbsp;&nbsp; 
+    <input type="checkbox" id="peacock" name=yourCards>
+    <label for="peacock"> Peacock</label> &nbsp;&nbsp;&nbsp; 
+    <input type="checkbox" id="mustard" name=yourCards>
+    <label for="mustard"> Plum</label> &nbsp;&nbsp;&nbsp; 
+    <input type="checkbox" id="peacock" name=yourCards>
+    <label for="peacock"> Scarlet</label> &nbsp;&nbsp;&nbsp; 
+    <input type="checkbox" id="white" name=yourCards>
+    <label for="white"> White</label> &nbsp;&nbsp;&nbsp; 
+    <input type="checkbox" id="candlestick" name=yourCards>
+    <label for="candlestick"> Candlestick</label><br>
+    <input type="checkbox" id="dagger" name=yourCards>
+    <label for="dagger"> Dagger</label> &nbsp;&nbsp;&nbsp; 
+    <input type="checkbox" id="pistol" name=yourCards>
+    <label for="pistol"> Pistol</label> &nbsp;&nbsp;&nbsp; 
+    <input type="checkbox" id="lead_pipe" name=yourCards>
+    <label for="lead_pipe"> Lead Pipe</label> &nbsp;&nbsp;&nbsp; 
+    <input type="checkbox" id="rope" name=yourCards>
+    <label for="rope"> Rope</label> &nbsp;&nbsp;&nbsp; 
+    <input type="checkbox" id="wrench" name=yourCards>
+    <label for="wrench"> Wrench</label> &nbsp;&nbsp;&nbsp; 
+    <input type="checkbox" id="bathroom" name=yourCards>
+    <label for="bathroom"> Bathroom</label> &nbsp;&nbsp;&nbsp; 
+    <input type="checkbox" id="bedroom" name=yourCards>
+    <label for="bedroom"> Bedroom</label><br>
+    <input type="checkbox" id="courtyard" name=yourCards>
+    <label for="courtyard"> Courtyard</label> &nbsp;&nbsp;&nbsp; 
+    <input type="checkbox" id="dining_room" name=yourCards>
+    <label for="dining_room"> Dining Room</label> &nbsp;&nbsp;&nbsp; 
+    <input type="checkbox" id="game_room" name=yourCards>
+    <label for="game_room"> Game Room</label> &nbsp;&nbsp;&nbsp; 
+    <input type="checkbox" id="garage" name=yourCards>
+    <label for="garage"> Garage</label> &nbsp;&nbsp;&nbsp; 
+    <input type="checkbox" id="kitchen" name=yourCards>
+    <label for="kitchen"> Kitchen</label> &nbsp;&nbsp;&nbsp; 
+    <input type="checkbox" id="living_room" name=yourCards>
+    <label for="living_room"> Living Room</label> &nbsp;&nbsp;&nbsp; 
+    <input type="checkbox" id="office" name=yourCards>
+    <label for="office"> Office</label><br><br>
+    <button type="button" onclick="(function(){ setupGame(); })();">Submit</button>
+</form> 
+    <script src="./talkToTable.js"></script>
+</body>
+</html>

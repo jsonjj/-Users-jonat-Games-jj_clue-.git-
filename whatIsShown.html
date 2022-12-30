@@ -1,0 +1,28 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <title>Clue Solver</title>
+    
+</head>
+<body>
+    <h2>Clue Solver</h2>
+    
+<p>What Question did Player Ask:</p>
+<form action="./turns.html" method="post">
+    <p>What did they show(if you know):</p>
+    <select id="whatIsShown" name="defHas">
+        <option value="personShown"><script>
+ 	 document.getElementById("who").value;
+	</script></option>
+        <option value="placeShown"><script>
+ 	 document.getElementById("what").value;
+	</script></option>
+        <option value="thingShown"><script>
+ 	 document.getElementById("where").value;
+	</script></option>
+        <option value="iDunno">I don't know</option>
+    </select><br>
+    <input type="submit" value="Submit">
+</form> 
+</body>
+</html>
