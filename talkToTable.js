@@ -8,9 +8,12 @@ var turnForm = document.getElementById("turnForm");
 var whoInput = document.getElementById("who");
 var whatInput = document.getElementById("what");
 var whereInput = document.getElementById("where");
-var turnNum = 1;
+var turnNum = 0;
 var lastTurn = 0;
-var order = 1;
+var numOfPlayers;
+var turnsPassed = 0;
+var number = 1;
+var orderNum = 0;
 var answererInput = document.getElementById("whoAnswered");
 if (setupForm) {
     var playerNamesInputs = setupForm.elements["player[]"];
@@ -26,6 +29,7 @@ if (!gameKey) {
 function insert(tableName, data, callback, badcallback) {
   var xhttp = new XMLHttpRequest();
   xhttp.onreadystatechange = function () {
+      console.log(`Inserting data w/ ready State: ${this.readyState}`);
     if (this.readyState == 4) {
       if (this.status >= 200 && this.status < 300) {
         if (callback) {
@@ -49,12 +53,14 @@ function insert(tableName, data, callback, badcallback) {
 
 function select(tableName, filter, callback, badcallback) {
   var xhttp = new XMLHttpRequest();
+  // xhttp.timeout = 10000;
   xhttp.onreadystatechange = function () {
-              console.log(`Selecting data w/ ready State: ${this.readyState}`);
+      console.log(`Selecting data w/ ready State: ${this.readyState}`);
     if (this.readyState == 4) {
-        console.log(`Selecting data and ready w/ status: ${this.status}`);
+        console.log(`Selecting data w/ status: ${this.status}, & response: ${this.responseText}`);
       if (this.status >= 200 && this.status < 300) {
         if (callback) {
+        console.log(`wdqwdqwdqw: ${tableName}`);
           callback(this.responseText);
         }
       } else {
@@ -67,14 +73,21 @@ function select(tableName, filter, callback, badcallback) {
 
   var stringifiedFilter = JSON.stringify(filter);
   var encoded = encodeURI(stringifiedFilter);
+  encoded=`%7B\"gameKey\":\"${filter.gameKey}\"%7D`;
 //  xhttp.open("GET", `${baseTableUrl}/${tableName}?q=${stringifiedFilter}`, true);
-
-  xhttp.open("GET", `${baseTableUrl}/${tableName}?q=${encoded}`, true);
-    // xhttp.setRequestHeader("Accept", "application/json");
+  encoded=`%7B"gameKey":"${filter.gameKey}"%7D`;
+var url = `${baseTableUrl}/${tableName}?q=${encoded}`;
+ url = `${baseTableUrl}/${tableName}`;
+console.log(`the uri: ${url}`);
+  //xhttp.open("GET", url, true);
+  
+  xhttp.open("GET", `${baseTableUrl}/${tableName}?q=${encoded}`, false);
   xhttp.setRequestHeader("Content-Type", "application/json");
   xhttp.setRequestHeader("x-apikey", dbApiCorsKey);
-  console.log(`Looking '${tableName}' Record where: ${stringifiedFilter}...`);
+  // var stringifiedData = JSON.stringify(filter);
+  console.log(`Generating New '${tableName}' Record: ${stringifiedFilter}`);
   xhttp.send();
+  console.log("holllaaa vamos aqui");
 }
 
 function getURLParam(key,target){
@@ -135,11 +148,24 @@ function whatIsShown() {
     });
 }
 
+function playerNames() {
+    if (playerNamesInputs) {
+        return Object.values(playerNamesInputs).map((x) => {return x.value});
+    } else {
+      if (urlParams) {
+        playerNamesString = urlParams.get('playerNames');
+        return playerNamesString.split(", ");
+      } else {
+          console.warn("FAIL: missing playerName info...");
+          return [];
+      }
+    }
+}
  
 function setupInfo() {
     yourName = yourNameInput.value;
-    playerNames = Object.values(playerNamesInputs).map((x) => {return x.value})
-;
+    playerNames = playerNames();
+    numOfPlayers = parseInt(urlParams.get('numOfPlayers'))
   return {
     "numOfPlayers": parseInt(urlParams.get('numOfPlayers')),
     "yourName": yourName,
@@ -150,37 +176,33 @@ function setupInfo() {
   };
 }
 
-function turnNum(turnNum, order) {
-    if (lastTurn > 0) {     
-        turnNum = turnNum + 1;
-        lastTurn = 0;
-    }
-    if (order == parseInt(urlParams.get('numOfPlayers'))) {
-        lastTurn = 1;
-    }
+function order() {
+    orderNum = orderNum + 1
+    return orderNum
 }
 
-function order(order) {
-    if (order > parseInt(urlParams.get('numOfPlayers'))) {
-        order = 1;
-    } else {
-        order = order + 1;
+function turnNumber() {
+    turnNum = turnNum + 1
+    if (turnNum > playerNames().length) {
+        number = number + 1
+        turnNum = 0
     }
+    return number;
 }
+
 
 function turnInfo() {
     var who = whoInput.value;
     var what = whatInput.value;
     var where = whereInput.value;
     var whoAnswered = answererInput.value;
-
   return {
       "whoInQuestion": who,
       "whatInQuestion": what,
       "whereInQuestion": where,
-      "turnNum": turnNum,
+      "order": order(),
+      "turnNum": turnNumber(),
       "gameKey": gameKey,
-      "order": order,
       "whoAnswered": whoAnswered,
       "whatWasShown": whatIsShown(),
   };
@@ -195,7 +217,7 @@ function goFromFirstTurnToMoreTurns(res) {
     console.log(`I just gained ${res}`);
     addHiddenFieldToForm(turnForm, "gameKey", gameKey);
     getDataFromTables();
-    turnForm.submit();
+    turnForm.reset(); // inplace of submit we are just resetting the form
 
 }
 function gameTurn() {
@@ -213,8 +235,10 @@ function addHiddenFieldToForm(form, name, value) {
 
 function goFromSetupToTurnPage(res) {
     console.log(`I recieved got ${res}`);
-    addHiddenFieldToForm(setupForm, "gameKey", gameKey);
-    setupForm.submit();
+    window.location = `./turn.html?playerNames=${playerNames.join(", ")}&gameKey=${gameKey}`
+    //  addHiddenFieldToForm(setupForm, "gameKey", gameKey);
+//     addHiddenFieldToForm(setupForm, "playerNames", playerNames);
+//     setupForm.submit();
 }
 function setupGame() {
     insert("gamesetup", setupInfo(), goFromSetupToTurnPage);
