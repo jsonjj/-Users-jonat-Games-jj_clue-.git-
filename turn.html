@@ -5,6 +5,9 @@
 </head>
 <body>
     <h2>Clue Solver</h2>
+    <div id="whoWasIt"></div>
+    <div id="whatWasIt"></div>
+    <div id="whereWasIt"></div>
 <p>What Question did Player Ask:</p>
 <form id="turnForm" method="post">
     <select id="who" name="who">
@@ -40,6 +43,7 @@
     <p>Who Answered:</p>
     <select id="whoAnswered" name="whoAnswered">
         <option value="">Who Answered?</option>
+        <option value="nobody">Everyone Said No</option>
     </select><br>
     <p>What did they show(if you know):</p>
     <input type="radio" id="green" name=shownCard>
@@ -84,13 +88,14 @@
     <label for="living_room"> Living Room</label> &nbsp;&nbsp;&nbsp; 
     <input type="radio" id="office" name=shownCard>
     <label for="office"> Office</label><br>
-    <input type="radio" id="nothing" name=shownCard>
+    <input type="radio" id="" name=shownCard>
     <label for="nothing"> Nothing</label><br>
     <script src="./talkToTable.js"></script>
     <button type="button" onclick="(function(){ gameTurn(); })();">Submit</button>
 </form> 
     <div id="results" style="display:none"></div>
     <script src="./talkToTable.js"></script>
+    <script src="./solve.js"></script>
     <script>
         function addDropdownOptions(dropdown, text, value) {
             var opt = document.createElement("option");
