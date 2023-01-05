@@ -1,40 +1,43 @@
-var boardCards = []
-var yourCards = []
+var boardCards = [];
+var yourCards = [];
 var numOfPlayers;
 var yourName;
-var playerNames = []
-var whoCards = [green, mustard, peacock, plum, scarlet, white]
-var whatCards = [candlestick, dagger, pistol, lead_pipe, rope, wrench]
-var whereCards = [bathroom, bedroom, courtyard, dining_room, game_room, garage, kitchen, living_room, office]
-var allCards = [green, mustard, peacock, plum, scarlet, white, candlestick, dagger, pistol, lead_pipe, rope, wrench, bathroom, bedroom, courtyard, dining_room, game_room, garage, kitchen, living_room, office]
+var playerNames = [];
+var whoCards = ["green", "mustard", "peacock", "plum", "scarlet", "white"];
+var whatCards = ["candlestick", "dagger", "pistol", "lead_pipe", "rope", "wrench"];
+var whereCards = ["bathroom", "bedroom", "courtyard", "dining_room", "game_room", "garage", "kitchen", "living_room", "office"];
+var allCards = ["green", "mustard", "peacock", "plum", "scarlet", "white", "candlestick", "dagger", "pistol", "lead_pipe", "rope", "wrench", "bathroom", "bedroom", "courtyard", "dining_room", "game_room", "garage", "kitchen", "living_room", "office"];
 var yourPosition;
-var possibleWhoAnswers = [green, mustard, peacock, plum, scarlet, white]
-var possibleWhatAnswers = [candlestick, dagger, pistol, lead_pipe, rope, wrench]
-var possibleWhereAnswers = [bathroom, bedroom, courtyard, dining_room, game_room, garage, kitchen, living_room, office]
+var possibleWhoAnswers = ["green", "mustard", "peacock", "plum", "scarlet", "white"];
+var possibleWhatAnswers = ["candlestick", "dagger", "pistol", "lead_pipe", "rope", "wrench"];
+var possibleWhereAnswers = ["bathroom", "bedroom", "courtyard", "dining_room", "game_room", "garage", "kitchen", "living_room", "office"];
 var whoSolution;
 var whatSolution;
 var whereSolution;
-var cardsOnBoard = {}
-var cardsInHand = {}
+var cardsOnBoard = {};
+var cardsInHand = {};
 var cards = {boardCards: cardsOnBoard, yourCards: cardsInHand};
-var doesntHaves = []
-var playersWorked = 0
-var identifier = [0]
+var dontHaves = [];
+var playersWorked = 0;
+var identifier = [0];
 var allPossibleAns = {};
-var howManyOneOfs = 0
-var IsItGood = 0
+var howManyOneOfs = 0;
+var IsItGood = 0;
 var possibleAnsAry = [];
-var orderNumber = 1
-var cardShown = ""
-var whoAnswered = ""
-var whoQuestion = ""
-var whatQuestion = ""
-var whereQuestion = ""
-var fullQuestion = []
+var orderNumber = 1;
+var cardShown = "";
+var whoAnswered = "";
+var whoQuestion = "";
+var whatQuestion = "";
+var whereQuestion = "";
+var fullQuestion = [];
+var boardUpdate = [];
+
+console.log("RELOADING THE PAGE")
 
 function setPlayerCards() {
     for (let i = 0; i < numOfPlayers; i++) {
-        playerNames[i]
+        playerNames[i];
     }
 }
 
@@ -42,49 +45,72 @@ function setPlayerCards() {
 
 function setupObj(boardCards, yourCards, playerNames) {
     createBoardObj(boardCards);
-    createYourObj(yourCards);
     createPlayerObj(playerNames);
 }
 
 function createBoardObj(boardCards) {
-    cards.boardCards.defHasCards = boardCards
-    cards.boardCards.donthaves = doesntHaves(boardCards)
+    cards.boardCards.defHasCards = boardCards;
+    var dontHaveBoardCards = doesntHaves(boardCards);
+    cards.boardCards.donthaves = dontHaveBoardCards;
+    createYourObj(yourCards);
 }
 
 function createYourObj(yourCards) {
-    cards.yourCards.defHasCards = yourCards
-    cards.yourCards.donthaves = doesntHaves(yourCards)
+    var yourCardsNow = [];
+    for (let i = 0; i < yourCards.length; i++) {
+        yourCardsNow.push(yourCards[i]);
+    }
+    cards.yourCards.defHasCards = yourCardsNow;
+    var myDontHaveCards = doesntHaves(yourCardsNow);
+    cards.yourCards.donthaves = myDontHaveCards;
 }
 
 function createPlayerObj(playerNames) {
     for (let i = 0; i < playerNames.length; i++) {
-    cards.[playerNames[i]] = {defHasCards: [], doesntHaveCards: [], hasOneOfCards: {}}
+        console.log(`Player Name: ${playerNames[i]}`);
+        if (playerNames[i] !== yourName) {
+            cards[playerNames[i]] = {defHasCards: [], doesntHaveCards: [], hasOneOfCards: {}};
+        }
     }
+    console.log(`Cards: ${JSON.stringify(cards)}`);
 }
 
 function doesntHaves(haves) {
-    for (let i = 0; i < haves.length; i++) {
-        doesntHaves = allCards.splice(allCards.indexOf(haves[i]), 1)
-    }
-    return doesntHaves
+var setA = new Set(haves);
+var setB = new Set(allCards);
+var newSet = JSON.stringify(difference(setB, setA));
+console.log(`difference(setB, setA): ${newSet}`);
+var newAry = new Array(newSet);
+var aryString = newAry[0];
+var coolAry = JSON.parse(aryString);
+return coolAry;
+}
+
+function difference(s1, s2) {
+  return [...s1].filter(function(x) { return [...s2].indexOf(x) < 0 });
 }
 
 function addingToPlayerHas(obj, cardPlayingWith, playerName) {
+    if (!(cardPlayingWith instanceof Array)) {
+        return addingToPlayerHas(obj, [cardPlayingWith], playerName);
+    }
     for (let i = 0; i < cardPlayingWith.length; i++) {
+        console.log(`Player Name: ${playerName}, Player cards: ${cards[playerName]}, Cards: ${JSON.stringify(cards)}`);
+        console.log(`Your Cards Var: ${yourCards}, Board Cards: ${boardCards}`);
         if (cards[playerName].defHasCards.includes(cardPlayingWith[i])) {
-            console.log("We already know that ${playerName} has ${cardPlayingWith}")
+            console.log("We already know that ${playerName} has ${cardPlayingWith}");
         } else {
-            updateDefHasObj(obj, cardPlayingWith[i])
+            updateDefHasObj(obj, cardPlayingWith[i]);
             for (let i = 0; i < numOfPlayers; i++) {
                 if (playerNames[i] != playerName) {
-                    addingToPlayerDontHaves(cards[playerNames[i]] ,cardPlayingWith[i], playerName)
+                    addingToPlayerDontHaves(cards[playerNames[i]] ,cardPlayingWith[i], playerName);
                 }
             }
             for (let i = 0; i < identifier.length; i++) {
                 for (let j = 0; j < cardPlayingWith.length; j++) {
                     if (obj.hasOneOfCards[indetifier[i]].cards.includes(cardPlayingWith[j])) {
-                        obj.hasOneOfCards[indetifier[i]].cards.splice(obj.hasOneOfCards[indetifier[i]].cards.indexOf(cardPlayingWith[j]), 1)
-                        obj.hasOneOfCards[indetifier[i]].status = true
+                        obj.hasOneOfCards[indetifier[i]].cards.splice(obj.hasOneOfCards[indetifier[i]].cards.indexOf(cardPlayingWith[j]), 1);
+                        obj.hasOneOfCards[indetifier[i]].status = true;
                     }
                 }
             }
@@ -95,17 +121,18 @@ function addingToPlayerHas(obj, cardPlayingWith, playerName) {
 function addingToPlayerDontHaves(obj, cardPlayingWith, playerName) {
     for (let i = 0; i < cardPlayingWith.length; i++) {
         if (cards[playerName].doesntHaveCards.includes(cardPlayingWith[i])) {
-            console.log("We already know that ${playerName} doesn't have ${cardPlayingWith}")
+            console.log("We already know that ${playerName} doesn't have ${cardPlayingWith}");
         } else {
-            updateDoesntHaveObj(obj, cardPlayingWith[i])
+            updateDoesntHaveObj(obj, cardPlayingWith[i]);
             for (let i = 0; i < identifier.length; i++) {
                 for (let j = 0; j < cardPlayingWith.length; j++) {
                     if (obj.hasOneOfCards[indetifier[i]].cards.includes(cardPlayingWith[j])) {
-                        obj.hasOneOfCards[indetifier[i]].cards.splice(obj.hasOneOfCards[indetifier[i]].cards.indexOf(cardPlayingWith[j]), 1)
+                        obj.hasOneOfCards[indetifier[i]].cards.splice(obj.hasOneOfCards[indetifier[i]].cards.indexOf(cardPlayingWith[j]), 1);
                     }
                 }
             }
         }
+    }
 }
     
 
@@ -113,42 +140,46 @@ function addingToPlayerDontHaves(obj, cardPlayingWith, playerName) {
 function updateDefHasObj(obj, defHasCards) {
     if (defHasCards.length > 1) {
         for (let i = 0; i < defHasCards.length; i++)  {
-            obj.defHasCards.push(defHasCards[i])
+            obj.defHasCards.push(defHasCards[i]);
         }
     } else {
-        obj.defHasCards.push(defHasCards)
+        obj.defHasCards.push(defHasCards);
     }
-    checkIfAllAnsForPlayer(obj)
+    console.log(obj.defHasCards)
+    checkIfAllAnsForPlayer(obj);
 }
 function updateDoesntHaveObj(obj, doesntHaveCards) {
    if (doesntHaveCards.length > 1) {
         for (let i = 0; i < doesntHaveCards.length; i++)  {
-            obj.doesntHaveCards.push(doesntHaveCards[i])
+            obj.doesntHaveCards.push(doesntHaveCards[i]);
         }
     } else {
-        obj.doesntHaveCards.push(doesntHaveCards)
+        obj.doesntHaveCards.push(doesntHaveCards);
     } 
+    console.log(obj.doesntHaveCards)
+
 }
 function updateHasOneOfObj(obj, hasOneOfCards) {
     if (identifier.length > 1) {
-        identifier.push(identifier[identifier.length - 1] + 1)
+        identifier.push(identifier[identifier.length - 1] + 1);
     }
-    obj.hasOneOfCards[indetifier[identifier.length - 1]] = {}
-    obj.hasOneOfCards[indetifier[identifier.length - 1]].cards = hasOneOfCards
-    obj.hasOneOfCards[indetifier[identifier.length - 1]].status = false
+    obj.hasOneOfCards[indetifier[identifier.length - 1]] = {};
+    obj.hasOneOfCards[indetifier[identifier.length - 1]].cards = hasOneOfCards;
+    obj.hasOneOfCards[indetifier[identifier.length - 1]].status = false;
     for (let i = 0; i < identifier.length; i++) {
         for (let j = 0; j < obj.defHasCards.length; j++) {
             if (obj.hasOneOfCards[indetifier[i]].cards.includes(obj.defHasCards[j])) {
-                obj.hasOneOfCards[indetifier[i]].cards.splice(obj.hasOneOfCards[indetifier[i]].cards.indexOf(obj.defHasCards[j]), 1)
-                obj.hasOneOfCards[indetifier[i]].status = true
+                obj.hasOneOfCards[indetifier[i]].cards.splice(obj.hasOneOfCards[indetifier[i]].cards.indexOf(obj.defHasCards[j]), 1);
+                obj.hasOneOfCards[indetifier[i]].status = true;
             }
         }
     }
-    checkIfAllAnsForPlayer(obj)
+    console.log(obj.hasOneOfCards)
+    checkIfAllAnsForPlayer(obj);
 } 
 
 function checkIfAnswer() {
-    if (whoCards.includes(whoSolution) && whatCards.includes(whatSolution) &&       whereCards.includes(whereSolution)) {
+    if (whoCards.includes(whoSolution) && whatCards.includes(whatSolution) && whereCards.includes(whereSolution)) {
         window.location = './answer.html';
         setAnswer(whoSolution, whatSolution, whereSolution);
         
@@ -174,7 +205,8 @@ function checkAnsType(ans) {
 
 function checkIfAllAnsForPlayer(obj) {
     if (obj.defHasCards.length == 3) {
-        obj.doesntHaveCards = doesntHaves(obj.defHasCards)
+        var dontHavePlayerCards = doesntHaves(obj.defHasCards)
+        obj.doesntHaveCards = dontHavePlayerCards
         checkAnswer()
     } else {
         for (let i = 0; i < indetifier.length; i++) {
@@ -204,7 +236,8 @@ function checkIfAllAnsForPlayer(obj) {
                                 possibleAnsAry.push(allPossibleAns[i][j])
                             }
                         }
-                        obj.doesntHaveCards = doesntHaves(possibleAnsAry)
+                        var iDontHaveIt = doesntHaves(possibleAnsAry)
+                        obj.doesntHaveCards = iDontHaveIt
                         checkAnswer()
                     }
                 }
@@ -232,7 +265,7 @@ function checkAnswer() {
     }
 }
 
-function yourPosition {
+function yourPosition() {
     for (let i = 0; i < numOfPlayers; i++) {
         if (playerNames[i] == yourName) {
             yourPosition = i
@@ -241,18 +274,18 @@ function yourPosition {
 }
 
 
-    
-function handleResults(res1) {
-    select("turn", {"gameKey": gameKey, "order": orderNumber}, function(res2) { handleTurnResults(res1, res2) }, handleError);
-} 
 
-function handleTurnResults(res1, res2) {
-    var obj1 = JSON.parse(res1);
+
+function handleTurnResults(res2) {
     var obj2 = JSON.parse(res2);
-    setupData(obj1);
     turnData(obj2);
 }
-    
+
+function handleSetupResults(res1) {
+    var obj1 = JSON.parse(res1);
+    setupData(obj1);
+}
+
 function turnData(obj2) {
     var results = JSON.stringify(obj2);
     whatWasShown(results);
@@ -270,11 +303,17 @@ function checkWhatToDo(cardShown, whoAnswered, fullQuestion) {
                     addingToPlayerDontHaves(cards[playerNames[i]], fullQuestion, playerNames[i])
                 }
             }
+        } else  if (didPlayerAnswer(whoAnswered)) {
+            updateHasOneOfObj(cards[playerNames[playerNames.indexOf(whoAnswered)]], fullQuestion)
         } else {
-            updateHasOneOfObj(cards.[playerNames[playerNames.indexOf(whoAnswered)]], fullQuestion)
+            for (let i = 0; i < numOfPlayers; i++) {
+                if (playerNames[i] != determineCurrentPlayer(orderNumber)) {
+                    addingToPlayerDontHaves(cards[playerNames[i]], fullQuestion, playerNames[i])
+                }
+            }
         }
     } else {
-        addingToPlayerHas(cards.[playerNames[playerNames.indexOf(whoAnswered)]], cardShown, whoAnswered)
+        addingToPlayerHas(cards[playerNames[playerNames.indexOf(whoAnswered)]], cardShown, whoAnswered)
     }
 }
 
@@ -297,7 +336,16 @@ function isCardShownToMe(cardShown) {
         return true
     }
 }
-    
+
+function didPlayerAnswer(whoAnswered) {
+    if (whoAnswered !== '""') {
+        return false
+    } else {
+        return true
+    }
+}
+
+
 function whatWasShown(results) {
     var shownPlus = results.slice(results.indexOf('"whatWasShown"'));
     cardShown = shownPlus.slice((shownPlus.indexOf(':') + 1), (shownPlus.indexOf(',')));
@@ -332,7 +380,7 @@ function setupData(obj1) {
     numberOfPlayers(results);
     name(results);
     namesOfPlayers(results);
-    cardsOnBoard(results);
+    whatCardsOnBoard(results);
     myCards(results);
     setupObj(boardCards, yourCards, playerNames)
 }
@@ -347,6 +395,7 @@ function numberOfPlayers(results) {
 function name(results) {
     var nameAndMore = results.slice(results.indexOf('"yourName"'));
     yourName = nameAndMore.slice((nameAndMore.indexOf(':') + 1), (nameAndMore.indexOf(',')));
+    yourName = JSON.parse(yourName);
     //return yourName;
     console.log(`Your Name: ${yourName}`)
 }
@@ -354,28 +403,38 @@ function name(results) {
 function namesOfPlayers(results) {
     var playerNam = results.slice(results.indexOf('"playerNames"'));
     playerNames = playerNam.slice((playerNam.indexOf(':') + 1), (playerNam.indexOf(']')) + 1);
+    playerNames = JSON.parse(playerNames);
     //return playerNames;
     console.log(`Player Names: ${playerNames}`)
 }
 
-function cardsOnBoard(results) {
+function whatCardsOnBoard(results) {
     var cardBoard = results.slice(results.indexOf('"boardCards"'));
-    boardCards = cardBoard.slice((cardBoard.indexOf(':') + 1), (cardBoard.indexOf(']')) + 1);
+    boardCardsUn = cardBoard.slice((cardBoard.indexOf(':') + 1), (cardBoard.indexOf(']')) + 1);
+    boardCards = JSON.parse(boardCardsUn)
+    //boardCardsUpdate = JSON.parse(boardCardsUpdate);
+    //for (let i = 0; i < boardCardsUpdate; i++) {
+    //    boardCards = boardCardsUpdate.split(",")
+    //}
     //return boardCards;
     console.log(`Board Cards: ${boardCards}`)
 }
 
 function myCards(results) {
     var mine = results.slice(results.indexOf('"yourCards"'));
-    yourCards = mine.slice((mine.indexOf(':') + 1), (mine.indexOf(']')) + 1);
+    yourCardsUn = mine.slice((mine.indexOf(':') + 1), (mine.indexOf(']')) + 1);
+    yourCards = JSON.parse(yourCardsUn)
     //return yourCards;
     console.log(`your Cards: ${yourCards}`)
 }
 
 function getSetupData() {
-    select("gamesetup", {"gameKey": gameKey}, handleResults, handleError);
+    select("gamesetup", {"gameKey": gameKey}, handleSetupResults, handleError);
 }
 
+function getTurnData() {
+    select("turn", {"gameKey": gameKey, "order": orderNumber}, handleTurnResults, handleError);
+} 
 
-getSetupData()
-//{"_id":"63b0f995cbd79f6600040923","whoInQuestion":"peacock","whatInQuestion":"dagger","whereInQuestion":"game_room","whoAnswered":"ascasc","whatWasShown":["green"],"order":1,"turnNum":1,"gameKey":"17eb6ee2-ce63-ef59-4baf-7924dc00d2b3"}}
+//getTurnData()
+//getSetupData()

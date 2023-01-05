@@ -113,7 +113,7 @@ function getURLParam(key,target){
             return values.length == 1 ? values[0] : values;
         }
     }
-function boardCards() {
+function findBoardCards() {
     return Object.values(board).map(function(x) {
         if (x.checked !== true) {
             return null;
@@ -124,7 +124,7 @@ function boardCards() {
     return elements !== null;
     });
 }
-function myCards() {
+function myCardFunctions() {
     return Object.values(mineCards).map(function(x) {
         if (x.checked !== true) {
             return null;
@@ -148,7 +148,7 @@ function whatIsShown() {
     });
 }
 
-function playerNames() {
+function determinePlayerNames() {
     if (playerNamesInputs) {
         return Object.values(playerNamesInputs).map((x) => {return x.value});
     } else {
@@ -164,14 +164,14 @@ function playerNames() {
  
 function setupInfo() {
     yourName = yourNameInput.value;
-    playerNames = playerNames();
+    playerNames = determinePlayerNames();
     numOfPlayers = parseInt(urlParams.get('numOfPlayers'))
   return {
     "numOfPlayers": parseInt(urlParams.get('numOfPlayers')),
     "yourName": yourName,
     "playerNames": playerNames,
-    "boardCards": boardCards(),
-    "yourCards": myCards(),
+    "boardCards": findBoardCards(),
+    "yourCards": myCardFunctions(),
     "gameKey": gameKey,
   };
 }
@@ -183,7 +183,7 @@ function order() {
 
 function turnNumber() {
     turnNum = turnNum + 1
-    if (turnNum > playerNames().length) {
+    if (turnNum > determinePlayerNames().length) {
         number = number + 1
         turnNum = 0
     }
@@ -273,4 +273,5 @@ function getDataFromGameSetupTable() {
 function getDataFromGameTurnTable(res1) {
     console.log(`gonnna get ${gameKey} from turn table`)
     select("turn", {"gameKey": gameKey}, function(res2) { turnResults(res1, res2) }, handleError);
+    getTurnData()
 }

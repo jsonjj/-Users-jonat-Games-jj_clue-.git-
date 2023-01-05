@@ -9,6 +9,11 @@
     <div id="whatWasIt"></div>
     <div id="whereWasIt"></div>
 <p>What Question did Player Ask:</p>
+<script src="./talkToTable.js"></script>
+<script src="./solve.js"></script>
+<script>
+    getSetupData()
+</script>
 <form id="turnForm" method="post">
     <select id="who" name="who">
         <option value="">Who?</option>
@@ -104,8 +109,8 @@
             dropdown.options.add(opt);
         }
         var dEL = document.getElementById("whoAnswered")
-        for (let i = 0; i < playerNames().length; i++) {
-            addDropdownOptions(dEL, playerNames()[i], playerNames()[i]);
+        for (let i = 0; i < determinePlayerNames().length; i++) {
+            addDropdownOptions(dEL, determinePlayerNames()[i], determinePlayerNames()[i]);
         }
     </script>
 </body>
